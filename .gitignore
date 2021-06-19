@@ -8,6 +8,8 @@ target
 /.project
 /.settings
 /RUNNING_PID
+/conf/application.conf
+/app/models/CodeGen.scala
 # Ignore Play! working directory #
 bin/
 /db

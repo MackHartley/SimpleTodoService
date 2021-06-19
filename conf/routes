@@ -4,7 +4,17 @@
 # ~~~~
 
 # An example controller showing a sample home page
-GET     /                           controllers.HomeController.index()
+GET     /                                           controllers.TodoControllerV1.load
+POST    /validate			    	                controllers.TodoControllerV1.validate
++nocsrf
+POST    /createUser				    	            controllers.TodoControllerV1.createUser
++nocsrf
+GET     /getTodos/:username			                controllers.TodoControllerV1.todoList(username)
++nocsrf
+POST    /addTodo/:username			    	        controllers.TodoControllerV1.addTodo(username)
++nocsrf
+POST    /deleteTodo			    	                controllers.TodoControllerV1.deleteTodo
+GET     /logout				    	                controllers.TodoControllerV1.logout
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+GET     /assets/*file                               controllers.Assets.versioned(path="/public", file: Asset)
