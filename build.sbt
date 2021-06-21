@@ -23,6 +23,12 @@ libraryDependencies ++= Seq(
   "com.nulab-inc" %% "play2-oauth2-provider" % "1.5.0"
 )
 
+// from: https://auth0.com/blog/build-and-secure-a-scala-play-framework-api/
+libraryDependencies ++= Seq(
+  "com.github.jwt-scala" %% "jwt-play" % "8.0.2",
+  "com.auth0" % "jwks-rsa" % "0.6.1"
+)
+
 // Adds additional packages into Twirl
 //TwirlKeys.templateImports += "com.mackhartley.controllers._"
 
