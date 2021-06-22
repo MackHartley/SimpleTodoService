@@ -1,19 +1,20 @@
 package controllers
 
+import auth.AuthAction
 import javax.inject._
-
 import play.api.mvc._
 import play.api.libs.json._
 import models._
-
 import play.api.db.slick.DatabaseConfigProvider
+
 import scala.concurrent.ExecutionContext
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.jdbc.JdbcProfile
+
 import scala.concurrent.Future
 
 @Singleton
-class TodoControllerV1 @Inject() (protected val dbConfigProvider: DatabaseConfigProvider, cc: ControllerComponents)(implicit ec: ExecutionContext)
+class TodoControllerV1 @Inject()(protected val dbConfigProvider: DatabaseConfigProvider, cc: ControllerComponents, authAction: AuthAction)(implicit ec: ExecutionContext)
   extends AbstractController(cc) with HasDatabaseConfigProvider[JdbcProfile] {
 
   private val model = new TodoDatabaseModel(db)
@@ -37,7 +38,7 @@ class TodoControllerV1 @Inject() (protected val dbConfigProvider: DatabaseConfig
     }.getOrElse(Future.successful(BadRequest))
   }
 
-  def validate = Action.async { implicit request =>
+  def validate = authAction.async { implicit request =>
     withJsonBody[UserData] { ud =>
       model.validateUser(ud.username, ud.password).map { ouserId =>
         ouserId match {
@@ -51,7 +52,7 @@ class TodoControllerV1 @Inject() (protected val dbConfigProvider: DatabaseConfig
     }
   }
 
-  def createUser = Action.async { implicit request =>
+  def createUser = authAction.async { implicit request =>
     println("mackdebug: createUser called")
     withJsonBody[UserData] {
       ud => model.createUser(ud.username, ud.password).map {
@@ -67,12 +68,12 @@ class TodoControllerV1 @Inject() (protected val dbConfigProvider: DatabaseConfig
     }
   }
 
-  def todoList(username: String) = Action.async { implicit request =>
+  def todoList(username: String) = authAction.async { implicit request =>
     println("mackdebug: todoList called")
     model.getTodos(username).map(todos => Ok(Json.toJson(todos)))
   }
 
-  def addTodo(username: String) = Action.async { implicit request =>
+  def addTodo(username: String) = authAction.async { implicit request =>
     println("mackdebug: addTodo called")
     withJsonBody[String] { todo =>
       println("TESTMACK - Hit controller2")
@@ -80,18 +81,18 @@ class TodoControllerV1 @Inject() (protected val dbConfigProvider: DatabaseConfig
     }
   }
 
-  def deleteTodo = Action.async { implicit request =>
+  def deleteTodo = authAction.async { implicit request =>
     println("mackdebug: deleteTodo called")
     withJsonBody[Int] { itemId =>
       model.removeTodo(itemId).map(removed => Ok(Json.toJson(removed)))
     }
   }
 
-  def logout = Action { implicit request =>
+  def logout = authAction { implicit request =>
     Ok(Json.toJson(true)).withSession(request.session - "username")
   }
 
-  def load() = Action { implicit request =>
+  def ping() = Action { implicit request =>
     Ok("Working")
   }
 }
