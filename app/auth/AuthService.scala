@@ -27,16 +27,6 @@ class AuthService @Inject()(config: Configuration) {
     _ <- validateClaims(claims)
   } yield claims
 
-  private val splitToken = (jwt: String) => jwt match {
-    case jwtRegex(header, body, sig) => Success((header, body, sig))
-    case _ => Failure(new Exception("Token does not match the correct pattern"))
-  }
-
-  private val decodeElements = (data: Try[(String, String, String)]) => data map {
-    case (header, body, sig) =>
-      (JwtBase64.decodeString(header), JwtBase64.decodeString(body), sig)
-  }
-
   private val getJwk = (token: String) =>
     (splitToken andThen decodeElements) (token) flatMap {
       case (header, _, _) =>
@@ -48,12 +38,21 @@ class AuthService @Inject()(config: Configuration) {
         } getOrElse Failure(new Exception("Unable to retrieve kid"))
     }
 
+  private val splitToken = (jwt: String) => jwt match {
+    case jwtRegex(header, body, sig) => Success((header, body, sig))
+    case _ => Failure(new Exception("Token does not match the correct pattern"))
+  }
+
+  private val decodeElements = (data: Try[(String, String, String)]) => data map {
+    case (header, body, sig) =>
+      (JwtBase64.decodeString(header), JwtBase64.decodeString(body), sig)
+  }
+
   private val validateClaims = (claims: JwtClaim) =>
     if (claims.isValid(issuer, audience)) {
       Success(claims)
     } else {
       Failure(new Exception("The JWT did not pass validation"))
     }
-
 
 }
