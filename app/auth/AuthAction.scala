@@ -23,18 +23,22 @@ class AuthAction @Inject()(bodyParser: BodyParsers.Default, authService: AuthSer
       println("Got to 1")
       authService.validateJwt(token) match {
         case Success(claim) => {
+          println("got to 2")
           claim.subject match {
             case Some(userId) => {
-              println("Got to 2")
+              println("Got to 3")
               block(UserRequest(claim, token, request, userId))
             }
             case _ => {
-              println("Got to 3")
+              println("Got to 4")
               Future.successful(Results.Unauthorized("There was an error parsing the JWT"))
             }
           }
         }
-        case Failure(t) => Future.successful(Results.Unauthorized(t.getMessage))
+        case Failure(t) => {
+          println("Got to 5")
+          Future.successful(Results.Unauthorized(t.getMessage))
+        }
       }
     } getOrElse Future.successful(Results.Unauthorized)
 
