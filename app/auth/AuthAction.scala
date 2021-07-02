@@ -20,11 +20,18 @@ class AuthAction @Inject()(bodyParser: BodyParsers.Default, authService: AuthSer
 
   override def invokeBlock[A](request: Request[A], block: UserRequest[A] => Future[Result]): Future[Result] =
     extractBearerToken(request) map { token =>
+      println("Got to 1")
       authService.validateJwt(token) match {
         case Success(claim) => {
           claim.subject match {
-            case Some(userId) => block(UserRequest(claim, token, request, userId))
-            case _ => Future.successful(Results.Unauthorized("There was an error parsing the JWT"))
+            case Some(userId) => {
+              println("Got to 2")
+              block(UserRequest(claim, token, request, userId))
+            }
+            case _ => {
+              println("Got to 3")
+              Future.successful(Results.Unauthorized("There was an error parsing the JWT"))
+            }
           }
         }
         case Failure(t) => Future.successful(Results.Unauthorized(t.getMessage))
