@@ -1,0 +1,1 @@
+CREATE TABLE items (item_id SERIAL PRIMARY KEY, user_id varchar(100), text varchar(2000));
