@@ -13,4 +13,4 @@ Once you've made those changes you run the server locally:
 1) Navigate to the `simpleTodoService` folder
 2) type `sbt run`
 
-If you get an error saying that `sbt` isn't recognized, that means you need to install `sbt`. Steps for that can be found [here](https://www.scala-sbt.org/1.x/docs/Installing-sbt-on-Mac.html).
+If you get an error saying that `sbt` isn't recognized, that means you need to install `sbt`. Steps for that can be found [here](https://www.scala-sbt.org/1.x/docs/Installing-sbt-on-Mac.html)
